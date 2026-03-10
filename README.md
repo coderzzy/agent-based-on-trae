@@ -8,8 +8,9 @@
 使用：
 1、在 TRAE 里打开项目
 2、使用 uv 配置基础 python 环境，并设置 TRAE 的开发环境为 .venv/bin/python
-3、TRAE 调整到 Build / SOLO 模式，输入 prompt 指令
-4、等待 TRAE 完成，生成最终报告
+3、把 待分析数据文件 放到 input/ 目录下
+4、TRAE 调整到 Build / SOLO 模式，输入 prompt 指令
+5、等待 TRAE 完成，生成最终报告
 ```
 
 
