@@ -1,10 +1,16 @@
-# llm-data-analysis
-摸索使用大模型进行数据分析
-- 思路：
-    - 1. 大模型生成中间代码
-    - 2. 由中间代码完成最终的数据分析和报告产出
-- 工具
-    - TRAE + MCP + Skills
+# llm-data-analysis 基于 AI IDE 的数据分析
+```
+思路：
+1、使用 AI IDE 里 LLM 的 Agent 能力
+2、配置好通用的 rules、MCP、Skills
+3、完成生成代码，分析数据，产出报告
+
+使用：
+1、在 AI IDE 里打开项目
+2、配置基础 python 环境
+3、IDE 调整到 Agent 模式，输入 prompt 指令
+4、等待 Agent 完成，生成最终报告
+```
 
 
 ## 环境与启动（python项目）
@@ -19,7 +25,4 @@ uv venv
 source .venv/bin/activate  
 # 安装依赖
 uv pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-# 运行服务
-python run.py  
 ```
