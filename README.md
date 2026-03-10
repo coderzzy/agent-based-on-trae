@@ -1,15 +1,15 @@
-# llm-data-analysis 基于 AI IDE 的数据分析
+# llm-data-analysis 基于 TRAE 的数据分析
 ```
 思路：
-1、使用 AI IDE 里 LLM 的 Agent 能力
+1、使用 TRAE 里 LLM 的 Agent 能力
 2、配置好通用的 rules、MCP、Skills
 3、完成生成代码，分析数据，产出报告
 
 使用：
-1、在 AI IDE 里打开项目
-2、配置基础 python 环境
-3、IDE 调整到 Agent 模式，输入 prompt 指令
-4、等待 Agent 完成，生成最终报告
+1、在 TRAE 里打开项目
+2、使用 uv 配置基础 python 环境，并设置 TRAE 的开发环境为 .venv/bin/python
+3、TRAE 调整到 Build / SOLO 模式，输入 prompt 指令
+4、等待 TRAE 完成，生成最终报告
 ```
 
 
