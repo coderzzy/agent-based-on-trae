@@ -1,9 +1,9 @@
-# llm-data-analysis 基于 TRAE 的 Agent 任务
+# Agent Based On TRAE | 基于 TRAE 的 Agent 任务
 ```
 思路：
 1、使用 TRAE 里 LLM 的 Agent 能力
 2、配置好通用的 rules、MCP、Skills
-3、完成生成代码，分析数据，产出报告
+3、完成主要基于代码能力的各种 Agent 任务（如数据分析、图文视频剪辑等）
 
 使用：
 1、在 TRAE 里打开项目
