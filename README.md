@@ -27,4 +27,10 @@ uv venv
 source .venv/bin/activate  
 # 安装依赖
 uv pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 运行脚本
+python xxx.py
+
+# uv 依赖 跟 requirements.txt 保持一致
+uv pip list --format=freeze > requirements.txt
 ```
