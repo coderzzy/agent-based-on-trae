@@ -8,7 +8,7 @@
 使用：
 1、在 TRAE 里打开项目
 2、使用 uv 配置基础 python 环境，并设置 TRAE 的开发环境为 .venv/bin/python
-3、把 输入文件 放到 input/ 目录下
+3、把 输入文件 放到 input/ 目录下，指定输出到 output_*/ 目录下
 4、TRAE 调整到 Build / SOLO 模式，输入 prompt 指令
 5、等待 TRAE 完成，生成产物
 6、让 Agent 总结本次任务为 prompt_templates/skills 等，放到libs目录下
