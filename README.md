@@ -3,7 +3,7 @@
 思路：
 1、使用 TRAE 里 LLM 的 Agent 能力
 2、配置好通用的 rules、MCP、Skills
-3、完成主要基于代码能力的各种 Agent 任务（如数据分析、图文视频剪辑等）
+3、完成主要基于代码能力的各种 Agent 任务（如数据分析、图文视频剪辑、新闻资讯等）
 
 使用：
 1、在 TRAE 里打开项目
@@ -11,11 +11,14 @@
 3、把 输入文件 放到 input/ 目录下，指定输出到 output_*/ 目录下
 4、TRAE 调整到 Build / SOLO 模式，输入 prompt 指令
 5、等待 TRAE 完成，生成产物
-6、让 Agent 总结本次任务为 prompt_templates/skills 等，放到libs目录下
+6、让 Agent 总结本次任务为 prompt_templates / skills 等，放到libs目录下
 ```
 
+## 目前支持的 prompt、mcp、skills
 
-## 环境与启动（python项目）
+## 环境与启动
+
+### python环境
 ```
 # 安装uv，方法一
 curl -Ls https://astral.sh/uv/install.sh | bash
@@ -33,4 +36,17 @@ python xxx.py
 
 # uv 依赖 跟 requirements.txt 保持一致
 uv pip list --format=freeze > requirements.txt
+```
+
+### Node 环境
+
+### MCP 配置
+
+### Skills 配置
+
+```bash
+# 将 libs/skills 下的所有 skill 复制到 .trae/skills 目录
+# -r: 递归复制目录
+# -f: 强制覆盖同名文件
+cp -rf libs/skills/* .trae/skills/
 ```
