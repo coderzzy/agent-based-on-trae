@@ -87,5 +87,38 @@ npm run dev
 - 原始数据：`output/ai_news_raw.json`
 
 
+### 每日金融资讯
+
+自动获取每日金融新闻资讯（Twitter 金融 KOL），生成飞书文档格式的 Markdown 报告。
+
+#### 前置依赖
+
+1. **browser-operator** - 用于使用本地浏览器进行网页信息获取 Skill
+   - 仓库：https://github.com/coderzzy/agent-browser-operator-skill
+   - 安装 Chrome 浏览器插件
+   - 启动本地服务：
+     ```bash
+     cd server && npm run dev
+     ```
+
+2. **daily_finance_news** - 金融资讯获取 Skill
+   ```bash
+   rsync -av --delete libs/skills/daily_finance_news/ .trae/skills/daily_finance_news/
+   ```
+
+#### 使用方式
+
+在 TRAE 中输入指令：
+
+```
+获取今日金融资讯
+```
+
+#### 输出
+
+- Markdown 报告：`output_finance/finance_news_YYYY-MM-DD.md`
+- 原始数据：`output_finance/finance_news_raw.json`
+
+
 ## TODO:
 - skills里的python脚本，直接用 scripts/xxx 会报错找不到，暂时先使用 .trae/skills/xxx
