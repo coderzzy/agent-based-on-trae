@@ -37,22 +37,54 @@ uv pip list --format=freeze > requirements.txt
 ```
 
 ### Node 环境
+```
+# 安装 nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+# 创建 node 环境
+nvm install 23
+# 激活 node 环境
+nvm use 23
+# 安装依赖
+npm install
+# 启动服务
+npm run dev
+```
 
 
 ## 案例
 
 ### 每日AI资讯
-1. 配置 skills：
-browser-control：用于网页信息获取
-- https://github.com/coderzzy/agent-browser-control-skill
-- 安装chrome浏览器插件，启动本地server（cd server && npm run dev）
 
-daily_ai_news：获取Anthropic的每日AI资讯
-```bash
-rsync -av --delete libs/skills/daily_ai_news/ .trae/skills/daily_ai_news/
+自动获取每日AI新闻资讯（Anthropic Engineering/Research/News + Twitter AI KOL），生成飞书文档格式的 Markdown 报告。
+
+#### 前置依赖
+
+1. **browser-control** - 用于网页信息获取 Skill
+   - 仓库：https://github.com/coderzzy/agent-browser-control-skill
+   - 安装 Chrome 浏览器插件
+   - 启动本地服务：
+     ```bash
+     cd server && npm run dev
+     ```
+
+2. **daily_ai_news** - AI资讯获取 Skill
+   ```bash
+   rsync -av --delete libs/skills/daily_ai_news/ .trae/skills/daily_ai_news/
+   ```
+
+#### 使用方式
+
+在 TRAE 中输入指令：
+
+```
+获取今日AI资讯
 ```
 
-2. 发出指令：获取今日AI资讯
+#### 输出
+
+- Markdown 报告：`output/ai_news_YYYY-MM-DD.md`
+- 原始数据：`output/ai_news_raw.json`
 
 
 ## TODO:
