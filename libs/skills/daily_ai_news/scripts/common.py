@@ -11,7 +11,7 @@ def read_html_file(file_path: Path) -> str:
     try:
         content = file_path.read_text(encoding='utf-8')
         
-        # 尝试解析为JSON（browser-control返回的格式）
+        # 尝试解析为JSON（browser-operator返回的格式）
         try:
             data = json.loads(content)
             if isinstance(data, dict) and 'data' in data and 'content' in data['data']:

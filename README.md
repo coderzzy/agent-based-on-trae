@@ -60,8 +60,8 @@ npm run dev
 
 #### 前置依赖
 
-1. **browser-control** - 用于网页信息获取 Skill
-   - 仓库：https://github.com/coderzzy/agent-browser-control-skill
+1. **browser-operator** - 用于使用本地浏览器进行网页信息获取 Skill
+   - 仓库：https://github.com/coderzzy/agent-browser-operator-skill
    - 安装 Chrome 浏览器插件
    - 启动本地服务：
      ```bash
