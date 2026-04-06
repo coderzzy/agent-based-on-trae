@@ -14,8 +14,6 @@
 6、让 Agent 总结本次任务为 prompt_templates / skills 等，放到libs目录下
 ```
 
-## 目前支持的 prompt、mcp、skills
-
 ## 环境与启动
 
 ### python环境
@@ -40,13 +38,22 @@ uv pip list --format=freeze > requirements.txt
 
 ### Node 环境
 
-### MCP 配置
 
-### Skills 配置
+## 案例
 
+### 每日AI资讯
+1. 配置 skills：
+browser-control：用于网页信息获取
+- https://github.com/coderzzy/agent-browser-control-skill
+- 安装chrome浏览器插件，启动本地server（cd server && npm run dev）
+
+daily_ai_news：获取Anthropic的每日AI资讯
 ```bash
-# 将 libs/skills 下的所有 skill 复制到 .trae/skills 目录
-# -r: 递归复制目录
-# -f: 强制覆盖同名文件
-cp -rf libs/skills/* .trae/skills/
+rsync -av --delete libs/skills/daily_ai_news/ .trae/skills/daily_ai_news/
 ```
+
+2. 发出指令：获取今日AI资讯
+
+
+## TODO:
+- skills里的python脚本，直接用 scripts/xxx 会报错找不到，暂时先使用 .trae/skills/xxx
