@@ -37,6 +37,19 @@ uv pip list --format=freeze > requirements.txt
 ```
 
 ### Node 环境
+```
+# 安装 nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+# 创建 node 环境
+nvm install 23
+# 激活 node 环境
+nvm use 23
+# 安装依赖
+npm install
+# 启动服务
+npm run dev
+```
 
 
 ## 案例
