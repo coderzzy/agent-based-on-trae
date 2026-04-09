@@ -47,6 +47,16 @@ def generate_markdown_report(data: dict) -> str:
             'name': 'Peter L Brandt',
             'title': '资深交易员',
             'description': 'Peter Brandt 是拥有40多年经验的资深期货交易员，专注于技术分析和图表模式交易。'
+        },
+        'NickTimiraos (Twitter)': {
+            'name': 'Nick Timiraos',
+            'title': '华尔街日报首席经济记者',
+            'description': 'Nick Timiraos 是《华尔街日报》首席经济记者，专注于美联储和货币政策报道，是美联储报道领域的权威记者。'
+        },
+        'fundstrat (Twitter)': {
+            'name': 'Thomas Lee',
+            'title': 'Fundstrat 联合创始人',
+            'description': 'Thomas Lee 是 Fundstrat Global Advisors 联合创始人兼研究主管，华尔街知名策略师，以对比特币和科技股的深入研究著称。'
         }
     }
 

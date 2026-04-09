@@ -50,6 +50,14 @@ mkdir -p ./output_finance/articles
 - 访问: https://x.com/PeterLBrandt
 - 保存: `./output_finance/html/twitter_peter_brandt.html`
 
+**X (Twitter) - Nick Timiraos (华尔街日报首席经济记者，美联储报道权威):**
+- 访问: https://x.com/NickTimiraos
+- 保存: `./output_finance/html/twitter_nick_timiraos.html`
+
+**X (Twitter) - Thomas Lee (Fundstrat Global Advisors 联合创始人，华尔街策略师):**
+- 访问: https://x.com/fundstrat
+- 保存: `./output_finance/html/twitter_thomas_lee.html`
+
 #### 预留：其他金融新闻网站（未来扩展）
 
 **Bloomberg Markets:**
@@ -89,6 +97,20 @@ python .trae/skills/daily_finance_news/scripts/twitter_stage1.py \
   --output ./output_finance/stage1/twitter_peter_brandt.json \
   --username PeterLBrandt \
   --display-name "Peter L Brandt"
+
+# Nick Timiraos
+python .trae/skills/daily_finance_news/scripts/twitter_stage1.py \
+  --html ./output_finance/html/twitter_nick_timiraos.html \
+  --output ./output_finance/stage1/twitter_nick_timiraos.json \
+  --username NickTimiraos \
+  --display-name "Nick Timiraos"
+
+# Thomas Lee
+python .trae/skills/daily_finance_news/scripts/twitter_stage1.py \
+  --html ./output_finance/html/twitter_thomas_lee.html \
+  --output ./output_finance/stage1/twitter_thomas_lee.json \
+  --username fundstrat \
+  --display-name "Thomas Lee"
 
 # ==================== 预留：其他数据源（未来扩展） ====================
 
@@ -155,6 +177,8 @@ python .trae/skills/daily_finance_news/scripts/twitter_stage1.py \
 cp ./output_finance/stage1/twitter_matt_levine.json ./output_finance/stage2/twitter_matt_levine.json
 cp ./output_finance/stage1/twitter_ibd_investors.json ./output_finance/stage2/twitter_ibd_investors.json
 cp ./output_finance/stage1/twitter_peter_brandt.json ./output_finance/stage2/twitter_peter_brandt.json
+cp ./output_finance/stage1/twitter_nick_timiraos.json ./output_finance/stage2/twitter_nick_timiraos.json
+cp ./output_finance/stage1/twitter_thomas_lee.json ./output_finance/stage2/twitter_thomas_lee.json
 
 # ==================== 预留：新闻网站数据源（未来扩展） ====================
 # Bloomberg Stage 2（预留）
