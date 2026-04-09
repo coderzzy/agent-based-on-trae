@@ -67,6 +67,7 @@ npm run dev
      ```bash
      cd server && npm run dev
      ```
+   - Chrome 浏览器插件，连接服务
 
 2. **daily_ai_news** - AI资讯获取 Skill
    ```bash
@@ -100,6 +101,7 @@ npm run dev
      ```bash
      cd server && npm run dev
      ```
+   - Chrome 浏览器插件，连接服务
 
 2. **daily_finance_news** - 金融资讯获取 Skill
    ```bash
