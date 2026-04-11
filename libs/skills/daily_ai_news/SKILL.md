@@ -256,6 +256,172 @@ python scripts/merge_results.py \
 
 根据处理后的JSON数据，生成飞书文档格式的Markdown文件，保存到 `./output/ai_news_YYYY-MM-DD.md`。
 
+### Step 8: 生成小红书格式的 HTML 报告
+
+根据处理后的JSON数据，生成小红书格式的HTML报告，保存到 `./output/xiaohongshu_YYYY-MM-DD.html`。
+
+**HTML报告包含三个部分：**
+
+1. **小红书标题**
+   - 生成吸引眼球的标题（20字以内）
+   - 标题格式：`🔥 24小时内AI圈发生了什么 | YYYY-MM-DD`
+
+2. **图片部分（重要设计规范）**
+   
+   **设计原则：**
+   - 使用 **HTML/CSS** 设计图片样式，**禁止使用 Canvas**
+   - Canvas 难以控制排版和审美，HTML/CSS 更灵活、更美观
+   - 图片通过浏览器截图获取（Cmd+Shift+4 或浏览器开发者工具）
+   
+   **图片主题：**
+   - 主题统一为 **"24小时内AI圈发生了什么"**
+   - 不要只关注Twitter内容，要整合所有渠道（Anthropic Engineering/Research/News、Twitter等）
+   - 根据资讯内容提炼主题，而不是根据来源渠道
+   
+   **图片数量和内容组织：**
+   - 不要每条资讯一张图，需要**根据主题合并**
+   - 精选重要、有价值的资讯进行展示
+   - 相同主题的多个资讯可以合并到一张图中
+   - 通常生成 3-4 张图：1张封面 + 2-3张内容图
+   
+   **图片来源适配：**
+   - **Anthropic 文章**：显示文章标题、来源（Anthropic Engineering/Research/News）、核心观点摘要、原文链接
+   - **Twitter 推文**：显示作者名、Twitter账号、原文引用、原文链接
+   - **混合展示**：同一主题下可以同时展示Anthropic文章和Twitter观点
+   
+   **图片内容要求：**
+   - **必须包含完整来源信息**：根据来源类型显示（公司博客/作者名 + 账号/链接）
+   - **必须包含原文引用**：保留英文原文，不要只写中文概括
+   - **必须包含详细内容**：不只是简短标题，要有具体信息
+   - 使用渐变背景、卡片式布局、引用框等设计元素
+   - 配色要符合小红书审美：深色科技风、渐变色彩、高对比度
+   
+   **图片结构示例：**
+   ```html
+   <!-- 封面 -->
+   <div class="xhs-image cover-bg">
+     <div class="cover-title">24小时内<br>AI圈发生了什么</div>
+     <div class="cover-date">2026.04.10</div>
+     <div class="cover-highlights">
+       <div class="cover-item">中国AI占领硅谷</div>
+       <div class="cover-item">Replit助力创业</div>
+       <div class="cover-item">Waymo澄清事件</div>
+     </div>
+   </div>
+   
+   <!-- 内容图 - 混合来源示例 -->
+   <div class="xhs-image news-bg-1">
+     <div class="news-header">
+       <div class="news-title">🇨🇳 中国开源AI占领硅谷</div>
+     </div>
+     <!-- Twitter来源 -->
+     <div class="news-source">
+       <div class="source-badge">Twitter</div>
+       <div class="source-info">
+         <div class="source-name">Peter Yang</div>
+         <div class="source-handle">@petergyang</div>
+       </div>
+     </div>
+     <div class="quote-box">
+       <div class="quote-text">"Silicon Valley is quietly running on Chinese open source AI models..."</div>
+     </div>
+     <!-- 详细内容列表 -->
+     <div class="news-footer">
+       <div class="news-link">🔗 x.com/...</div>
+     </div>
+   </div>
+   
+   <!-- 内容图 - Anthropic文章示例 -->
+   <div class="xhs-image news-bg-2">
+     <div class="news-header">
+       <div class="news-title">🤖 Claude新功能发布</div>
+     </div>
+     <div class="news-source">
+       <div class="source-badge">Anthropic</div>
+       <div class="source-info">
+         <div class="source-name">Anthropic Engineering</div>
+       </div>
+     </div>
+     <div class="article-summary">
+       核心观点摘要...
+     </div>
+     <div class="news-footer">
+       <div class="news-link">🔗 anthropic.com/...</div>
+     </div>
+   </div>
+   ```
+
+3. **文案及Tag**
+   - **文案**：从当日文章中精选重要资讯，包含完整来源和原文引用
+   - **格式示例**：
+     ```
+     📌 24小时内AI圈热点：
+     
+     1️⃣ [主题标题]
+     [来源]：Anthropic Engineering / @作者
+     [英文原文/核心观点]
+     [中文解读]
+     🔗 [原文链接]
+     
+     2️⃣ [主题标题]
+     [来源]：Twitter @作者
+     [英文原文引用]
+     [中文解读]
+     🔗 [原文链接]
+     
+     ...
+     
+     💡 关注我每天追踪AI圈最新动态
+     ```
+   - **Tag**：添加15-20个相关标签，格式为 `#标签名`
+
+**图片尺寸规范：**
+- 小红书标准图片尺寸为 **3:4 比例**
+- 推荐尺寸：**540×720px** 或 **1080×1440px**
+- 尺寸过大（如1080×1440）可能导致浏览器需要缩放才能完整截图
+- 尺寸过小会影响文字清晰度
+- **最佳实践：使用 540×720px，无需缩放即可直接截图**
+
+**HTML/CSS 设计最佳实践：**
+
+1. **减少留白，内容紧凑**
+   - 适当减小 padding 和 margin
+   - 内容区域要充实，避免大片空白
+   - 使用 `flex: 1` 让内容区自适应填充剩余空间
+
+2. **文案排版**
+   - 使用 `white-space: pre-line` 保留换行格式
+   - 文案内容直接放在 `<div>` 中，使用实际换行符而非 `<br>`
+   - 段落间距通过 line-height 控制
+
+3. **字体大小适配**
+   - 标题：36-52px
+   - 正文：13-16px
+   - 小字（链接、时间）：11-13px
+   - 根据图片尺寸等比例缩放
+
+4. **视觉层次**
+   - 使用渐变背景增加质感
+   - 卡片使用半透明毛玻璃效果（`backdrop-filter: blur`）
+   - 重点内容使用高亮色（金色 #ffd700、青色 #00d4ff）
+
+**常见设计错误（避免）：**
+1. ❌ 使用 Canvas 绘制图片（难以控制审美）
+2. ❌ 每条资讯一张图（应该按主题合并）
+3. ❌ 图片内容过于简略（必须包含来源、原文/摘要、链接）
+4. ❌ 只写中文概括（必须保留英文原文或核心观点）
+5. ❌ 配色单调或不符合小红书风格
+6. ❌ 只展示Twitter内容（要整合所有渠道）
+7. ❌ 标题不统一（统一使用"24小时内AI圈发生了什么"）
+8. ❌ 图片尺寸过大导致需要缩放才能截图
+9. ❌ 留白过多，内容稀疏
+10. ❌ 文案排版错乱（换行不生效）
+
+**输出文件：**
+- 文件路径：`./output/xiaohongshu_YYYY-MM-DD.html`
+- 包含完整的HTML和CSS样式代码
+- 可直接在浏览器中打开，截图保存为图片
+
 ## 数据源处理说明
 
 | 数据源 | Stage 1 | Stage 2 | 日期判断逻辑 |

@@ -67,6 +67,7 @@ npm run dev
      ```bash
      cd server && npm run dev
      ```
+   - Chrome 浏览器插件，连接服务
 
 2. **daily_ai_news** - AI资讯获取 Skill
    ```bash
@@ -100,6 +101,7 @@ npm run dev
      ```bash
      cd server && npm run dev
      ```
+   - Chrome 浏览器插件，连接服务
 
 2. **daily_finance_news** - 金融资讯获取 Skill
    ```bash
@@ -120,5 +122,35 @@ npm run dev
 - 原始数据：`output_finance/finance_news_raw.json`
 
 
+### 基金分析
+
+从天天基金网获取基金历史数据，生成包含净值走势、周期涨跌幅分析、收益反转周期分析、月度收益分布的 PPT 风格的 HTML 可视化报告。
+
+#### 前置依赖
+
+1. **fund_analysis** - 基金分析 Skill
+   ```bash
+   rsync -av --delete libs/skills/fund_analysis/ .trae/skills/fund_analysis/
+   ```
+
+#### 使用方式
+
+在 TRAE 中输入指令：
+
+```
+帮我分析基金，代号为012805
+```
+
+#### 输出
+
+- HTML 报告：`output_fund/{基金代码}/report/report_{基金代码}.html`
+- 分析数据：`output_fund/{基金代码}/analysis/analysis_{基金代码}.json`
+- 原始数据：`output_fund/{基金代码}/raw/{基金代码}_raw.js`
+
+
 ## TODO:
-- skills里的python脚本，直接用 scripts/xxx 会报错找不到，暂时先使用 .trae/skills/xxx
+- skills里的python脚本，有时候直接用 scripts/xxx 会报错找不到，暂时先使用 .trae/skills/xxx
+- 其他X博主（如时政等）？
+- 其他平台的爬取？
+- 视频字幕翻译能力？
+- boss直聘信息跟踪挖掘？
