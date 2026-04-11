@@ -149,7 +149,7 @@ npm run dev
 
 
 ## TODO:
-- skills里的python脚本，直接用 scripts/xxx 会报错找不到，暂时先使用 .trae/skills/xxx
+- skills里的python脚本，有时候直接用 scripts/xxx 会报错找不到，暂时先使用 .trae/skills/xxx
 - 其他X博主（如时政等）？
 - 其他平台的爬取？
 - 视频字幕翻译能力？
