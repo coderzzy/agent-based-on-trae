@@ -726,67 +726,329 @@ class HTMLReportGenerator:
     <script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{ 
+        
+        /* PPT风格 - 横版16:9比例 */
+        :root {{
+            --slide-width: 297mm;
+            --slide-height: 167mm;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }}
+        
+        body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
             color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
+            line-height: 1.5;
         }}
-        .container {{ 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 10px;
+
+        /* PPT幻灯片容器 */
+        .ppt-container {{
+            max-width: var(--slide-width);
+            margin: 0 auto;
+            padding: 20px;
         }}
-        @media (max-width: 768px) {{
-            .container {{ padding: 8px; }}
+
+        /* 单个幻灯片 - 横版16:9 */
+        .slide {{
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: white;
+            margin: 0 auto 30px auto;
+            padding: 30px 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            page-break-after: always;
+            break-after: page;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
         }}
-        .header {{ 
-            background: rgba(255,255,255,0.95);
-            color: #333;
-            padding: 24px 20px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        
+        .slide:last-child {{
+            page-break-after: auto;
+            break-after: auto;
+        }}
+        
+        /* 幻灯片标题 */
+        .slide-header {{
             text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
+            flex-shrink: 0;
         }}
-        @media (max-width: 768px) {{
-            .header {{ padding: 16px 12px; }}
-            .header h1 {{ font-size: 20px !important; }}
-        }}
-        .header h1 {{ 
-            font-size: 26px; 
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .slide-header h1 {{
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 8px;
         }}
-        .header .meta {{ 
-            opacity: 0.7; 
+
+        .slide-header h2 {{
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }}
+
+        .slide-header .meta {{
             font-size: 13px;
             color: #666;
+            margin-top: 8px;
         }}
-        .disclaimer {{
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            border: 1px solid #f39c12;
+
+        /* 幻灯片内容区 */
+        .slide-content {{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }}
+
+        /* 封面幻灯片 */
+        .slide-cover {{
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }}
+
+        .slide-cover .slide-header {{
+            border-bottom: none;
+        }}
+
+        .slide-cover h1 {{
+            font-size: 42px;
+            color: white;
+            -webkit-text-fill-color: white;
+            margin-bottom: 15px;
+        }}
+
+        .slide-cover .meta {{
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+        }}
+
+        .slide-cover .disclaimer {{
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.95);
+            padding: 15px 25px;
             border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
+            margin-top: 30px;
             font-size: 12px;
-            color: #856404;
-            line-height: 1.6;
+            max-width: 85%;
         }}
-        .disclaimer strong {{
-            color: #d68910;
-            display: block;
-            margin-bottom: 6px;
+        
+        /* 内容卡片 */
+        .content-card {{
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }}
+
+        .content-card h3 {{
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }}
+
+        /* 两列布局 */
+        .two-column {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }}
+
+        /* 信息网格 */
+        .info-grid {{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            height: 100%;
+            align-items: center;
+        }}
+
+        .info-item {{
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px 15px;
+            border-radius: 12px;
+            text-align: center;
+        }}
+
+        .info-item .label {{
             font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
         }}
-        @media (max-width: 768px) {{
-            .disclaimer {{ padding: 12px 14px; font-size: 11px; }}
-            .disclaimer strong {{ font-size: 12px; }}
+
+        .info-item .value {{
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
         }}
+
+        /* 图表容器 */
+        .chart-box {{
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }}
+
+        .chart-container {{
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+        }}
+
+        /* 表格样式 */
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }}
+
+        th, td {{
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }}
+
+        th {{
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 10px;
+        }}
+
+        tr:hover {{ background: #f8f9fa; }}
+
+        .positive {{ color: #e74c3c; font-weight: 600; }}
+        .negative {{ color: #27ae60; font-weight: 600; }}
+
+        /* 压力指标 */
+        .zone-grid {{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }}
+
+        .zone-item {{
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+        }}
+
+        .zone-support {{ background: #d4edda; }}
+        .zone-resistance {{ background: #f8d7da; }}
+        .zone-neutral {{ background: #e2e3e5; }}
+
+        /* 洞察高亮 */
+        .insight-content {{
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+            background: #fafafa;
+            border-radius: 12px;
+        }}
+        
+        .insight-content h3 {{
+            font-size: 16px;
+            color: var(--primary-color);
+            margin: 12px 0 8px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e9ecef;
+        }}
+        
+        .insight-content h3:first-child {{
+            margin-top: 0;
+        }}
+        
+        .insight-content p {{
+            font-size: 13px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 8px;
+        }}
+        
+        .insight-content strong {{
+            color: var(--primary-color);
+        }}
+
+        /* 统计行 */
+        .stats-row {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }}
+
+        .stat-box {{
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }}
+
+        .stat-label {{
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 4px;
+        }}
+
+        .stat-value {{
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }}
+
+        .current-price-tag {{
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }}
+
+        .progress-bar {{
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }}
+
+        .progress-fill {{
+            height: 100%;
+            border-radius: 3px;
+        }}
+
+        .progress-up {{ background: linear-gradient(90deg, #e74c3c, #c0392b); }}
+        .progress-down {{ background: linear-gradient(90deg, #27ae60, #229954); }}
+        
+        /* 加载遮罩 */
         .loading-overlay {{
             position: fixed;
             top: 0;
@@ -801,19 +1063,19 @@ class HTMLReportGenerator:
             align-items: center;
             transition: opacity 0.5s ease;
         }}
-        .loading-overlay.hidden {{
-            opacity: 0;
-            pointer-events: none;
-        }}
+        
+        .loading-overlay.hidden {{ opacity: 0; pointer-events: none; }}
+        
         .loading-spinner {{
             width: 50px;
             height: 50px;
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }}
+        
         @keyframes spin {{
             0% {{ transform: rotate(0deg); }}
             100% {{ transform: rotate(360deg); }}
@@ -846,252 +1108,28 @@ class HTMLReportGenerator:
             0%, 100% {{ opacity: 1; }}
             50% {{ opacity: 0.5; }}
         }}
+        
+        /* PDF导出按钮 */
         .pdf-btn {{
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px 24px;
             border-radius: 25px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
             z-index: 1000;
         }}
-        @media (max-width: 768px) {{
-            .pdf-btn {{
-                top: auto;
-                bottom: 20px;
-                right: 50%;
-                transform: translateX(50%);
-                padding: 14px 28px;
-                font-size: 15px;
-            }}
-        }}
+        
         .pdf-btn:hover {{
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }}
-        @media (max-width: 768px) {{
-            .pdf-btn:hover {{
-                transform: translateX(50%) translateY(-2px);
-            }}
-        }}
-        .card {{ 
-            background: rgba(255,255,255,0.98);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }}
-        @media (max-width: 768px) {{
-            .card {{ padding: 16px 12px; }}
-        }}
-        .card h2 {{ 
-            font-size: 18px; 
-            margin-bottom: 16px;
-            color: #1a1a1a;
-            border-left: 4px solid #667eea;
-            padding-left: 12px;
-            display: flex;
-            align-items: center;
-        }}
-        .card h2 .icon {{
-            margin-right: 8px;
-            font-size: 20px;
-        }}
-        .info-grid {{ 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }}
-        @media (max-width: 768px) {{
-            .info-grid {{ grid-template-columns: repeat(2, 1fr); gap: 10px; }}
-        }}
-        .info-item {{ 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 14px;
-            border-radius: 12px;
-            text-align: center;
-            transition: transform 0.2s ease;
-        }}
-        .info-item:hover {{
-            transform: translateY(-2px);
-        }}
-        .info-item .label {{ 
-            font-size: 11px;
-            color: #666;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }}
-        .info-item .value {{ 
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-        }}
-        .chart-container {{ 
-            height: 350px;
-            margin: 16px 0;
-            border-radius: 12px;
-            overflow: hidden;
-        }}
-        @media (max-width: 768px) {{
-            .chart-container {{ height: 280px; }}
-        }}
-        table {{ 
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-            font-size: 13px;
-        }}
-        @media (max-width: 768px) {{
-            table {{ font-size: 11px; }}
-            th, td {{ padding: 8px 6px !important; }}
-        }}
-        th, td {{ 
-            padding: 12px 10px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }}
-        th {{ 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            font-size: 12px;
-        }}
-        th:first-child {{ border-radius: 8px 0 0 0; }}
-        th:last-child {{ border-radius: 0 8px 0 0; }}
-        tr:last-child td:first-child {{ border-radius: 0 0 0 8px; }}
-        tr:last-child td:last-child {{ border-radius: 0 0 8px 0; }}
-        tr:hover {{ background: #f8f9fa; }}
-        .positive {{ color: #e74c3c; font-weight: 600; }}
-        .negative {{ color: #27ae60; font-weight: 600; }}
-        .neutral {{ color: #3498db; }}
-        .highlight {{ 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
-            border-radius: 16px;
-            margin-top: 20px;
-        }}
-        @media (max-width: 768px) {{
-            .highlight {{ padding: 16px; }}
-        }}
-        .highlight h3 {{ 
-            margin-bottom: 16px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-        }}
-        .highlight h3 .icon {{
-            margin-right: 8px;
-            font-size: 22px;
-        }}
-        .metrics-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
-        }}
-        .metric {{
-            text-align: center;
-            padding: 16px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        }}
-        .metric-value {{
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }}
-        .metric-label {{
-            font-size: 11px;
-            opacity: 0.9;
-        }}
-        .section-desc {{
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 16px;
-            padding: 10px 14px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 3px solid #667eea;
-        }}
-        .zone-badge {{
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }}
-        .zone-support {{
-            background: #d4edda;
-            color: #155724;
-        }}
-        .zone-resistance {{
-            background: #f8d7da;
-            color: #721c24;
-        }}
-        .zone-neutral {{
-            background: #e2e3e5;
-            color: #383d41;
-        }}
-        .current-price-tag {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 16px;
-        }}
-        .stats-row {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-        }}
-        @media (max-width: 768px) {{
-            .stats-row {{ grid-template-columns: repeat(2, 1fr); }}
-        }}
-        .stat-box {{
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-        }}
-        .stat-label {{
-            font-size: 10px;
-            color: #666;
-            margin-bottom: 4px;
-        }}
-        .stat-value {{
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-        }}
-        .progress-bar {{
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 6px;
-        }}
-        .progress-fill {{
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }}
-        .progress-up {{ background: linear-gradient(90deg, #e74c3c, #c0392b); }}
-        .progress-down {{ background: linear-gradient(90deg, #27ae60, #229954); }}
     </style>
 </head>
 <body>
@@ -1113,131 +1151,219 @@ class HTMLReportGenerator:
         📄 导出PDF
     </button>
     
-    <div class="container" id="report-content" style="opacity: 0; transition: opacity 0.5s ease;">
-        <div class="disclaimer">
-            <strong>⚠️ 免责声明</strong>
-            本报告仅供参考和学习使用，不构成任何投资建议。基金投资有风险，过往业绩不代表未来表现。投资者应根据自身风险承受能力谨慎决策，自行承担投资风险。报告中的数据和分析基于历史数据，不保证准确性和完整性。
-        </div>
-        
-        <div class="header">
-            <h1>{self.fund_data.get('name', '')}</h1>
-            <div class="meta">
-                基金代码: {self.fund_data.get('code', '')} | 
-                报告生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+    <div class="ppt-container" id="report-content">
+        <!-- Slide 1: 封面 -->
+        <div class="slide slide-cover">
+            <div class="slide-header">
+                <h1>{self.fund_data.get('name', '')}</h1>
+                <div class="meta">
+                    基金代码: {self.fund_data.get('code', '')}<br>
+                    报告生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+                </div>
+            </div>
+            <div class="disclaimer">
+                <strong>⚠️ 免责声明</strong>
+                本报告仅供参考和学习使用，不构成任何投资建议。基金投资有风险，过往业绩不代表未来表现。投资者应根据自身风险承受能力谨慎决策，自行承担投资风险。
             </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">📊</span>基金基本信息</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="label">基金代码</div>
-                    <div class="value">{self.fund_data.get('code', '')}</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">当前费率</div>
-                    <div class="value">{self.fund_data.get('rate', '')}%</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">最小申购</div>
-                    <div class="value">{self.fund_data.get('min_amount', '')}元</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">数据天数</div>
-                    <div class="value">{len(self.fund_data.get('net_worth_trend', []))}天</div>
+        <!-- Slide 2: 基金基本信息 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>📊 基金基本信息</h2>
+            </div>
+            <div class="slide-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">基金代码</div>
+                        <div class="value">{self.fund_data.get('code', '')}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">当前费率</div>
+                        <div class="value">{self.fund_data.get('rate', '')}%</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">最小申购</div>
+                        <div class="value">{self.fund_data.get('min_amount', '')}元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">数据天数</div>
+                        <div class="value">{len(self.fund_data.get('net_worth_trend', []))}天</div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">📈</span>累计净值走势</h2>
-            <div class="section-desc">展示基金成立以来累计净值的历史走势，支持缩放查看不同时间段</div>
-            <div id="trendChart" class="chart-container"></div>
+        <!-- Slide 3: 累计净值走势 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>📈 累计净值走势</h2>
+                <div class="meta">展示基金成立以来累计净值的历史走势</div>
+            </div>
+            <div class="slide-content">
+                <div class="chart-box">
+                    <div id="trendChart" class="chart-container"></div>
+                </div>
+            </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">📊</span>净值统计分析</h2>
-            <div class="section-desc">统计不同时间周期内净值的平均值、中位数、最高最低值，帮助了解净值分布特征</div>
-            {self._generate_net_worth_analysis_table()}
+        <!-- Slide 4: 净值统计分析 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>📊 净值统计分析</h2>
+                <div class="meta">统计不同时间周期内净值的平均值、中位数、最高最低值</div>
+            </div>
+            <div class="slide-content">
+                {self._generate_net_worth_analysis_table()}
+            </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">🎯</span>压力指标分析</h2>
-            <div class="section-desc">基于历史净值区间分析，识别支撑位（上涨概率高）和压力位（下跌概率高），辅助买卖决策</div>
-            {self._generate_pressure_analysis()}
+        <!-- Slide 5: 压力指标分析 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>🎯 压力指标分析</h2>
+                <div class="meta">识别支撑位（上涨概率高）和压力位（下跌概率高）</div>
+            </div>
+            <div class="slide-content">
+                {self._generate_pressure_analysis()}
+            </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">📅</span>不同间隔周期涨跌幅分析</h2>
-            <div class="section-desc">统计历史上按不同间隔周期持有后的涨跌幅分布，使用不重叠窗口计算</div>
-            {self._generate_multi_period_returns_table()}
+        <!-- Slide 6: 周期涨跌幅分析 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>📅 不同间隔周期涨跌幅分析</h2>
+                <div class="meta">统计历史上按不同间隔周期持有后的涨跌幅分布</div>
+            </div>
+            <div class="slide-content">
+                {self._generate_multi_period_returns_table()}
+            </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">🔄</span>收益反转周期分析</h2>
-            {self._generate_positive_periods_table()}
+        <!-- Slide 7: 收益反转周期分析 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>🔄 收益反转周期分析</h2>
+                <div class="meta">分析正收益持续周期及反转规律</div>
+            </div>
+            <div class="slide-content">
+                {self._generate_positive_periods_table()}
+            </div>
         </div>
         
-        <div class="card">
-            <h2><span class="icon">📆</span>月度收益分析</h2>
-            {self._generate_monthly_returns_table()}
-            <div id="monthlyChart" class="chart-container" style="margin-top: 20px;"></div>
+        <!-- Slide 8: 月度收益分析 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>📆 月度收益分析</h2>
+                <div class="meta">月度收益分布及季节性规律</div>
+            </div>
+            <div class="slide-content">
+                {self._generate_monthly_returns_table()}
+                <div class="chart-box" style="margin-top: 20px;">
+                    <div id="monthlyChart" class="chart-container"></div>
+                </div>
+            </div>
         </div>
         
-        <div class="highlight">
-            <h3><span class="icon">💡</span>数据洞察</h3>
-            <p id="insights" style="line-height: 1.8; font-size: 14px;">等待Agent解读...</p>
+        <!-- Slide 9: 数据洞察 (第1页) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>💡 数据洞察 (1/2)</h2>
+                <div class="meta">基于数据分析的投资建议 - 基金概况与走势分析</div>
+            </div>
+            <div class="slide-content">
+                <div class="insight-content" id="insights-page1">
+                    <p style="color: #666; text-align: center; padding: 40px;">等待Agent解读...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 10: 数据洞察 (第2页) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>💡 数据洞察 (2/2)</h2>
+                <div class="meta">基于数据分析的投资建议 - 风险提示与投资策略</div>
+            </div>
+            <div class="slide-content">
+                <div class="insight-content" id="insights-page2">
+                    <p style="color: #666; text-align: center; padding: 40px;">等待Agent解读...</p>
+                </div>
+            </div>
         </div>
     </div>
     
     <script>
-        // PDF导出功能
+        // PDF导出功能 - 使用浏览器打印，自动设置横向布局
         function exportToPDF() {{
-            // 检查html2pdf是否加载成功
-            if (typeof html2pdf === 'undefined') {{
-                alert('PDF导出库加载中，请稍后再试');
-                return;
-            }}
-            
-            const element = document.getElementById('report-content');
-            const opt = {{
-                margin: [10, 10, 10, 10],
-                filename: '基金分析报告_{self.fund_data.get('code', '')}_{datetime.now().strftime('%Y%m%d')}.pdf',
-                image: {{ type: 'jpeg', quality: 0.98 }},
-                html2canvas: {{ 
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
-                }},
-                jsPDF: {{ 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
+            // 添加打印样式
+            const printStyle = document.createElement('style');
+            printStyle.id = 'print-style';
+            printStyle.textContent = `
+                @media print {{
+                    @page {{
+                        size: 297mm 167mm;
+                        margin: 0;
+                    }}
+                    body {{
+                        background: white;
+                        margin: 0;
+                        padding: 0;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }}
+                    .ppt-container {{
+                        padding: 0;
+                        margin: 0;
+                        max-width: none;
+                    }}
+                    .slide {{
+                        width: 297mm;
+                        height: 167mm;
+                        margin: 0;
+                        padding: 30px 40px;
+                        box-shadow: none;
+                        page-break-after: always;
+                        break-after: page;
+                        box-sizing: border-box;
+                        background: white;
+                    }}
+                    .slide-cover {{
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }}
+                    .slide:last-child {{
+                        page-break-after: auto;
+                        break-after: auto;
+                    }}
+                    .pdf-btn, .loading-overlay {{
+                        display: none !important;
+                    }}
                 }}
-            }};
+            `;
+            document.head.appendChild(printStyle);
             
-            // 显示加载提示
+            // 显示提示
             const btn = document.querySelector('.pdf-btn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ 生成中...';
-            btn.disabled = true;
+            btn.innerHTML = '⏳ 准备打印...';
             
-            try {{
-                html2pdf().set(opt).from(element).save().then(() => {{
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }}).catch(err => {{
-                    console.error('PDF导出失败:', err);
-                    alert('PDF导出失败，请重试');
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }});
-            }} catch (err) {{
-                console.error('PDF导出错误:', err);
-                alert('PDF导出功能初始化失败，请刷新页面后重试');
+            // 延迟执行打印，确保样式应用
+            setTimeout(() => {{
+                // 调用打印，浏览器会自动使用横向布局
+                window.print();
+                
+                // 恢复按钮
                 btn.innerHTML = originalText;
-                btn.disabled = false;
-            }}
+                
+                // 打印完成后移除样式
+                setTimeout(() => {{
+                    const style = document.getElementById('print-style');
+                    if (style) {{
+                        document.head.removeChild(style);
+                    }}
+                }}, 1000);
+            }}, 200);
         }}
         
         // 资源加载状态检测
@@ -1498,7 +1624,7 @@ class HTMLReportGenerator:
         """
     
     def _generate_pressure_analysis(self) -> str:
-        """生成压力指标分析"""
+        """生成压力指标分析 - 优化布局，增大表格占比"""
         pressure = self.analysis.get('pressure_zones', {})
         
         if not pressure or not pressure.get('zones'):
@@ -1509,7 +1635,7 @@ class HTMLReportGenerator:
         current_zone_idx = pressure.get('current_zone_index', 0)
         summary = pressure.get('analysis_summary', {})
         
-        # 生成区间表格
+        # 生成区间表格 - 优化行高和间距
         zone_rows = ""
         for zone in zones:
             if zone['days_count'] == 0:
@@ -1520,75 +1646,74 @@ class HTMLReportGenerator:
             badge_text = "支撑" if zone_type == 'support' else ("压力" if zone_type == 'resistance' else "中性")
             
             is_current = zone['zone_index'] == current_zone_idx
-            row_style = 'background: linear-gradient(90deg, rgba(102,126,234,0.1) 0%, transparent 100%);' if is_current else ''
-            current_marker = ' 👈 当前' if is_current else ''
+            row_style = 'background: linear-gradient(90deg, rgba(102,126,234,0.15) 0%, transparent 100%);' if is_current else ''
+            current_marker = ' 👈' if is_current else ''
             
             zone_rows += f"""
                 <tr style="{row_style}">
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center;">
                         <span class="zone-badge {badge_class}">{badge_text}</span>{current_marker}
                     </td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 12px;">{zone['price_range']}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">{zone['days_count']}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
-                        <span class="{'positive' if zone['up_probability'] >= 50 else 'neutral'}">{zone['up_probability']}%</span>
-                        <div class="progress-bar">
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center; font-size: 11px;">{zone['price_range']}</td>
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center; font-size: 11px;">{zone['days_count']}</td>
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center;">
+                        <span class="{'positive' if zone['up_probability'] >= 50 else 'neutral'}" style="font-size: 11px;">{zone['up_probability']}%</span>
+                        <div class="progress-bar" style="height: 4px; margin-top: 2px;">
                             <div class="progress-fill progress-up" style="width: {zone['up_probability']}%"></div>
                         </div>
                     </td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
-                        <span class="{'negative' if zone['down_probability'] >= 50 else 'neutral'}">{zone['down_probability']}%</span>
-                        <div class="progress-bar">
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center;">
+                        <span class="{'negative' if zone['down_probability'] >= 50 else 'neutral'}" style="font-size: 11px;">{zone['down_probability']}%</span>
+                        <div class="progress-bar" style="height: 4px; margin-top: 2px;">
                             <div class="progress-fill progress-down" style="width: {zone['down_probability']}%"></div>
                         </div>
                     </td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center; color: {'#e74c3c' if zone['avg_return_5d'] > 0 else '#27ae60'}; font-weight: 600;">{zone['avg_return_5d']:+.2f}%</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center; color: {'#e74c3c' if zone['avg_return_20d'] > 0 else '#27ae60'}; font-weight: 600;">{zone['avg_return_20d']:+.2f}%</td>
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center; color: {'#e74c3c' if zone['avg_return_5d'] > 0 else '#27ae60'}; font-weight: 600; font-size: 11px;">{zone['avg_return_5d']:+.2f}%</td>
+                    <td style="padding: 6px 8px; border-bottom: 1px solid #eee; text-align: center; color: {'#e74c3c' if zone['avg_return_20d'] > 0 else '#27ae60'}; font-weight: 600; font-size: 11px;">{zone['avg_return_20d']:+.2f}%</td>
                 </tr>
             """
         
-        # 生成关键位分析
+        # 生成关键位分析 - 水平排列合并到顶部
         nearest_support = summary.get('nearest_support')
         nearest_resistance = summary.get('nearest_resistance')
         
         key_levels_html = ""
         if nearest_support:
             key_levels_html += f"""
-                <div class="stat-box" style="border-left: 4px solid #27ae60;">
-                    <div class="stat-label">最近支撑位</div>
-                    <div class="stat-value" style="color: #27ae60; font-size: 14px;">{nearest_support['price_range']}</div>
-                    <div style="font-size: 11px; color: #666; margin-top: 4px;">上涨概率 {nearest_support['up_probability']}%</div>
+                <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #27ae60; flex: 1;">
+                    <div style="font-size: 10px; color: #666;">最近支撑位</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #27ae60;">{nearest_support['price_range']}</div>
+                    <div style="font-size: 9px; color: #666;">上涨概率 {nearest_support['up_probability']}%</div>
                 </div>
             """
         if nearest_resistance:
             key_levels_html += f"""
-                <div class="stat-box" style="border-left: 4px solid #e74c3c;">
-                    <div class="stat-label">最近压力位</div>
-                    <div class="stat-value" style="color: #e74c3c; font-size: 14px;">{nearest_resistance['price_range']}</div>
-                    <div style="font-size: 11px; color: #666; margin-top: 4px;">下跌概率 {nearest_resistance['down_probability']}%</div>
+                <div style="background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #e74c3c; flex: 1;">
+                    <div style="font-size: 10px; color: #666;">最近压力位</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #e74c3c;">{nearest_resistance['price_range']}</div>
+                    <div style="font-size: 9px; color: #666;">下跌概率 {nearest_resistance['down_probability']}%</div>
                 </div>
             """
         
         return f"""
-        <div style="margin-bottom: 20px;">
-            <div class="current-price-tag">
+        <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+            <div class="current-price-tag" style="margin: 0; padding: 8px 16px; font-size: 14px;">
                 当前净值: {current_price:.4f}
             </div>
+            {key_levels_html}
         </div>
         
-        {f'<div class="stats-row" style="margin-bottom: 20px;">' + key_levels_html + '</div>' if key_levels_html else ''}
-        
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+        <div style="overflow-x: auto; flex: 1;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                 <thead>
-                    <tr>
-                        <th style="padding: 10px; text-align: center; border-radius: 8px 0 0 0;">区间类型</th>
-                        <th style="padding: 10px; text-align: center;">净值区间</th>
-                        <th style="padding: 10px; text-align: center;">历史天数</th>
-                        <th style="padding: 10px; text-align: center;">5日上涨概率</th>
-                        <th style="padding: 10px; text-align: center;">5日下跌概率</th>
-                        <th style="padding: 10px; text-align: center;">5日平均收益</th>
-                        <th style="padding: 10px; text-align: center; border-radius: 0 8px 0 0;">20日平均收益</th>
+                    <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <th style="padding: 8px 6px; text-align: center; border-radius: 6px 0 0 0; font-size: 11px;">类型</th>
+                        <th style="padding: 8px 6px; text-align: center; font-size: 11px;">净值区间</th>
+                        <th style="padding: 8px 6px; text-align: center; font-size: 11px;">天数</th>
+                        <th style="padding: 8px 6px; text-align: center; font-size: 11px;">上涨概率</th>
+                        <th style="padding: 8px 6px; text-align: center; font-size: 11px;">下跌概率</th>
+                        <th style="padding: 8px 6px; text-align: center; font-size: 11px;">5日收益</th>
+                        <th style="padding: 8px 6px; text-align: center; border-radius: 0 6px 0 0; font-size: 11px;">20日收益</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1597,12 +1722,11 @@ class HTMLReportGenerator:
             </table>
         </div>
         
-        <div style="margin-top: 16px; padding: 14px; background: #f8f9fa; border-radius: 10px; font-size: 12px; color: #666; line-height: 1.8;">
-            <strong style="color: #333;">📌 分析说明：</strong><br>
-            • <strong>支撑位</strong>：历史上该区间买入后5天内上涨概率≥60%，适合考虑加仓<br>
-            • <strong>压力位</strong>：历史上该区间买入后5天内下跌概率≥60%，适合考虑减仓或观望<br>
-            • <strong>上涨/下跌概率</strong>：基于该净值区间买入后未来5天的收益统计<br>
-            • 当前净值所在区间已用背景色标注
+        <div style="margin-top: 10px; padding: 10px 12px; background: #f8f9fa; border-radius: 8px; font-size: 10px; color: #666; line-height: 1.6;">
+            <strong style="color: #333;">📌 说明：</strong>
+            <strong>支撑位</strong>：上涨概率≥60%适合加仓 | 
+            <strong>压力位</strong>：下跌概率≥60%适合减仓 | 
+            当前净值区间已标注
         </div>
         """
     
@@ -1783,6 +1907,7 @@ def main():
     parser.add_argument('--code', required=True, help='基金代码')
     parser.add_argument('--input', required=True, help='输入JS文件路径')
     parser.add_argument('--output', required=True, help='输出HTML文件路径')
+    parser.add_argument('--json-output', required=True, help='输出JSON分析结果文件路径')
     args = parser.parse_args()
     
     # 读取JS文件
@@ -1812,7 +1937,7 @@ def main():
     }
     
     # 保存分析结果JSON（供Agent读取）
-    json_output = args.output.replace('.html', '_analysis.json')
+    json_output = args.json_output
     with open(json_output, 'w', encoding='utf-8') as f:
         json.dump({
             'fund_info': {
