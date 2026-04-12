@@ -129,9 +129,7 @@ npm run dev
 #### 前置依赖
 
 1. **fund_analysis** - 基金分析 Skill
-   ```bash
-   rsync -av --delete libs/skills/fund_analysis/ .trae/skills/fund_analysis/
-   ```
+   - 仓库：https://github.com/coderzzy/agent-fund-analysis-skill
 
 #### 使用方式
 
